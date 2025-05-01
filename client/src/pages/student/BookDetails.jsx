@@ -1,7 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAppContext } from '../../hooks/useContext';
-import { BookDetailCard } from '../../components';
 
 const BookDetails = () => {
   const { id } = useParams();

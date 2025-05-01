@@ -1,15 +1,16 @@
-import { Navigate } from 'react-router-dom';
+// src/components/ProtectedRoute.jsx
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAppContext } from '../../hooks/useContext';
 
 const ProtectedRoute = ({ children, role }) => {
   const { user } = useAppContext();
+  const location = useLocation();
 
   if (!user) {
-    return <Navigate to="/" replace />;
+    return <Navigate to={`/auth/${role}/login`} state={{ from: location }} replace />;
   }
 
-  // Check role if specified
-  if (role && user.role !== role) {
+  if (user.role !== role) {
     return <Navigate to="/" replace />;
   }
 
