@@ -10,6 +10,8 @@ import {
 import LandingPage from './pages/home/LandingPage';
 import AdminDashboardLayout from './components/layouts/AdminDashboardLayout';
 import StudentDashboardLayout from './components/layouts/StudentDashboardLayout'; // You'll need to create this similar to AdminDashboardLayout
+import BookList from './pages/admin/BookList';
+import AddBook from './pages/admin/AddBook';
 
 
 
@@ -41,6 +43,8 @@ function App() {
         }
       >
         <Route index element={<AdminDashboard />} />
+        <Route path='books' element={<BookList />} />
+        <Route path='books/add' element={<AddBook />} />
         {/* <Route index element={<AdminBooksPage />} />
         <Route path="books" element={<AdminBooksPage />} />
         <Route path="books/add" element={<AdminAddBookPage />} />

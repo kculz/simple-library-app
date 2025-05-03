@@ -7,7 +7,7 @@ const ProtectedRoute = ({ children, role }) => {
   const location = useLocation();
 
   if (!user) {
-    return <Navigate to={`/auth/${role}/login`} state={{ from: location }} replace />;
+    return <Navigate to={`/`} state={{ from: location }} replace />;
   }
 
   if (user.role !== role) {

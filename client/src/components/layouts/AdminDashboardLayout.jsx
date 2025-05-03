@@ -27,8 +27,6 @@ const AdminDashboardLayout = () => {
     { name: 'Dashboard', icon: <FaHome />, path: '/admin' },
     { name: 'Books', icon: <FaBook />, path: '/admin/books' },
     { name: 'Add Book', icon: <FaPlus />, path: '/admin/books/add' },
-    { name: 'Students', icon: <FaUsers />, path: '/admin/students' },
-    { name: 'Settings', icon: <FaCog />, path: '/admin/settings' },
   ];
 
   return (
