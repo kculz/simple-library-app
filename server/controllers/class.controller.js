@@ -169,3 +169,37 @@ exports.deleteClass = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+exports.getBookFilters = async (req, res) => {
+  try {
+    const classes = await Class.find();
+    
+    // Extract unique levels
+    const levels = [...new Set(classes.map(c => c.level))].map(level => ({
+      name: level,
+      classes: classes.filter(c => c.level === level).map(c => c._id)
+    }));
+
+    // Prepare modules array with class and level info
+    const modules = classes.flatMap(c => 
+      c.modules.map(m => ({
+        name: m,
+        class: c._id,
+        level: c.level
+      }))
+    );
+
+    res.json({
+      classes: classes.map(c => ({ _id: c._id, name: `${c.name} (${c.level})` })),
+      levels: levels.map(l => ({ _id: l.name, name: l.name, classes: l.classes })),
+      modules: modules.map((m, i) => ({ 
+        _id: `${m.class}-${m.name}`, // Create unique ID
+        name: m.name,
+        class: m.class,
+        level: m.level
+      }))
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching filters', error });
+  }
+};

@@ -5,6 +5,7 @@ const auth = require('../middlewares/auth');
 
 // Public routes
 router.get('/', classController.getClasses);
+router.get('/filters', classController.getBookFilters);
 router.get('/level/:level', classController.getClassesByLevel);
 router.get('/:id', classController.getClassById);
 
