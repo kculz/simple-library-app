@@ -6,10 +6,10 @@ import Input from './Input';
 import Button from '../ui/Button';
 
 const StudentLogin = () => {
-  const { login } = useAppContext();
+  const { login, api } = useAppContext();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    studentId: '',
+    email: '',
     password: '',
   });
   const [errors, setErrors] = useState({});
@@ -17,7 +17,10 @@ const StudentLogin = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.studentId) newErrors.studentId = 'Student ID is required';
+    if (!formData.email) newErrors.email = 'Email is required';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email';
+    }
     if (!formData.password) newErrors.password = 'Password is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -28,6 +31,13 @@ const StudentLogin = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+    // Clear error when user types
+    if (errors[e.target.name]) {
+      setErrors({
+        ...errors,
+        [e.target.name]: null,
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -36,20 +46,39 @@ const StudentLogin = () => {
 
     setLoading(true);
     try {
-      // In a real app, you would call your API here
-      // For demo purposes, we'll simulate a login
-      const user = {
-        id: 'student123',
-        studentId: formData.studentId,
-        name: 'Demo Student',
-        role: 'student',
-        department: 'computer-science',
+      const response = await api.post('/auth/login', {
+        email: formData.email,
+        password: formData.password
+      });
+
+      // Transform the response data to match our expected structure
+      const userData = {
+        id: response.data._id,
+        email: response.data.email,
+        name: response.data.name,
+        role: response.data.role,
+        classLevels: response.data.classLevels,
+        token: response.data.token
       };
+
+      login(userData, response.data.token);
       
-      login(user, 'student-auth-token');
-      navigate('/student/');
+      // Redirect to student dashboard
+      navigate('/student');
+
     } catch (error) {
-      setErrors({ form: 'Invalid credentials. Please try again.' });
+      console.error('Login error:', error);
+      let errorMessage = 'Login failed. Please try again.';
+      
+      if (error.response) {
+        if (error.response.status === 401) {
+          errorMessage = 'Invalid email or password';
+        } else if (error.response.data?.message) {
+          errorMessage = error.response.data.message;
+        }
+      }
+
+      setErrors({ form: errorMessage });
     } finally {
       setLoading(false);
     }
@@ -63,7 +92,7 @@ const StudentLogin = () => {
             Student Login
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Enter your credentials to access the library
+            Use your institutional email to login
           </p>
         </div>
 
@@ -76,14 +105,15 @@ const StudentLogin = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm space-y-4">
             <Input
-              label="Student ID"
-              name="studentId"
-              type="text"
+              label="Institutional Email"
+              name="email"
+              type="email"
               Icon={FaUserGraduate}
-              value={formData.studentId}
+              value={formData.email}
               onChange={handleChange}
-              error={errors.studentId}
-              placeholder="e.g. MTRE/2023/001"
+              error={errors.email}
+              placeholder="e.g. john.doe@mtrepoly.edu"
+              autoComplete="username"
             />
 
             <Input
@@ -95,6 +125,7 @@ const StudentLogin = () => {
               onChange={handleChange}
               error={errors.password}
               placeholder="Enter your password"
+              autoComplete="current-password"
             />
           </div>
 
@@ -114,7 +145,14 @@ const StudentLogin = () => {
               </label>
             </div>
 
-            
+            <div className="text-sm">
+              <a
+                href="/auth/forgot-password"
+                className="font-medium text-primary hover:text-primary-dark"
+              >
+                Forgot password?
+              </a>
+            </div>
           </div>
 
           <div>
@@ -123,6 +161,7 @@ const StudentLogin = () => {
               variant="primary"
               className="w-full"
               loading={loading}
+              disabled={loading}
             >
               Sign in
             </Button>

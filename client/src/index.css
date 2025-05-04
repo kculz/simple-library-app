@@ -1,3 +1,34 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.perspective-1000 {
+    perspective: 1000px;
+  }
+  
+  .transform-style-preserve-3d {
+    transform-style: preserve-3d;
+  }
+  
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+  
+  .transform-rotate-y-90 {
+    transform: rotateY(90deg);
+  }
+  
+  .transform-rotate-y-180 {
+    transform: rotateY(180deg);
+  }
+  
+  .group-hover\:rotate-y-20:hover {
+    transform: rotateY(20deg);
+  }
+  
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }

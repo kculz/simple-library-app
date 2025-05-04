@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../hooks/useContext';
-import { FaUserTie, FaLock, FaUniversity } from 'react-icons/fa';
+import { FaUserTie, FaLock } from 'react-icons/fa';
 import Input from './Input';
 import Button from '../ui/Button';
 
 const LecturerLogin = () => {
-  const { login } = useAppContext();
+  const { login, api } = useAppContext();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    classes: '',
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -20,10 +19,9 @@ const LecturerLogin = () => {
     const newErrors = {};
     if (!formData.email) newErrors.email = 'Email is required';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email';
+      newErrors.email = 'Please enter a valid institutional email';
     }
     if (!formData.password) newErrors.password = 'Password is required';
-    if (!formData.classes) newErrors.classes = 'class is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -33,6 +31,13 @@ const LecturerLogin = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+    // Clear error when user types
+    if (errors[e.target.name]) {
+      setErrors({
+        ...errors,
+        [e.target.name]: null,
+      });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -41,21 +46,42 @@ const LecturerLogin = () => {
 
     setLoading(true);
     try {
-      // In a real app, you would call your API here
-      // For demo purposes, we'll simulate a login
-      const user = {
-        id: 'lecturer123',
+      const response = await api.post('/auth/login', {
         email: formData.email,
-        name: 'Dr. Lecturer',
-        role: 'admin',
-        classes: formData.classes,
-        courses: ['CSC101', 'CSC201'],
-      };
+        password: formData.password
+      });
+
+      // Assuming backend returns:
+      // {
+      //   token: "jwt-token",
+      //   user: {
+      //     _id: "lecturer123",
+      //     email: "lecturer@mtrepoly.edu",
+      //     name: "Dr. Lecturer",
+      //     role: "lecturer",
+      //     courses: ["CSC101", "CSC201"]
+      //   }
+      // }
       
-      login(user, 'lecturer-auth-token');
-      navigate('/admin/');
+      login(response.data.user, response.data.token);
+      
+      // Redirect based on role
+      navigate('/admin');
+      
+
     } catch (error) {
-      setErrors({ form: 'Invalid credentials. Please try again.' });
+      console.error('Login error:', error);
+      let errorMessage = 'Login failed. Please try again.';
+      
+      if (error.response) {
+        if (error.response.status === 401) {
+          errorMessage = 'Invalid email or password';
+        } else if (error.response.data?.message) {
+          errorMessage = error.response.data.message;
+        }
+      }
+
+      setErrors({ form: errorMessage });
     } finally {
       setLoading(false);
     }
@@ -84,7 +110,7 @@ const LecturerLogin = () => {
 
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           <Input
-            label="Email Address"
+            label="Institutional Email"
             name="email"
             type="email"
             Icon={FaUserTie}
@@ -92,6 +118,7 @@ const LecturerLogin = () => {
             onChange={handleChange}
             error={errors.email}
             placeholder="lecturer@mtrepoly.edu"
+            autoComplete="username"
           />
 
           <Input
@@ -103,33 +130,8 @@ const LecturerLogin = () => {
             onChange={handleChange}
             error={errors.password}
             placeholder="Enter your password"
+            autoComplete="current-password"
           />
-
-          <div>
-            <label htmlFor="classes" className="block text-sm font-medium text-gray-700">
-              Class
-            </label>
-            <div className="mt-1 relative rounded-md shadow-sm">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <FaUniversity className="h-5 w-5 text-gray-400" />
-              </div>
-              <select
-                id="classes"
-                name="classes"
-                value={formData.classes}
-                onChange={handleChange}
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-              >
-                <option value="sc">Computer Systems</option>
-                <option value="electrical">Electrical Power</option>
-                <option value="ics">Instrumentation & Control Systems</option>
-                <option value="comsys">Communication Systems</option>
-              </select>
-            </div>
-            {errors.class && (
-              <p className="mt-1 text-sm text-red-600">{errors.class}</p>
-            )}
-          </div>
 
           <div className="flex items-center">
             <input
@@ -152,6 +154,7 @@ const LecturerLogin = () => {
               variant="primary"
               className="w-full justify-center"
               loading={loading}
+              disabled={loading}
             >
               Sign in as Lecturer
             </Button>

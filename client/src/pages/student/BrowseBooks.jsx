@@ -33,29 +33,7 @@ const BrowseBooks = () => {
     <div>
       <h1 className="text-2xl font-bold mb-6">Browse Books</h1>
       
-      <div className="flex gap-4 mb-6">
-        <Select
-          label="Department"
-          value={department}
-          onChange={(e) => setDepartment(e.target.value)}
-          options={[
-            { value: 'computer-science', label: 'Computer Science' },
-            { value: 'electrical', label: 'Electrical Engineering' },
-            { value: 'mechanical', label: 'Mechanical Engineering' },
-          ]}
-        />
-        
-        <Select
-          label="Course"
-          value={courseCode}
-          onChange={(e) => setCourseCode(e.target.value)}
-          options={[
-            { value: '', label: 'All Books' },
-            { value: 'CSC101', label: 'CSC101 - Intro to Computing' },
-            { value: 'CSC102', label: 'CSC102 - Programming' },
-          ]}
-        />
-      </div>
+      
 
       {loading ? (
         <div>Loading books...</div>

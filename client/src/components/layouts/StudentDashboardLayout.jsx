@@ -16,9 +16,7 @@ const StudentDashboardLayout = () => {
           <Link to="/student" className="flex items-center p-2 hover:bg-primary-dark rounded">
             <FaHome className="mr-3" /> Dashboard
           </Link>
-          <Link to="/student/browse" className="flex items-center p-2 hover:bg-primary-dark rounded">
-            <FaBook className="mr-3" /> Browse Books
-          </Link>
+          
         </nav>
         
         <div className="mt-auto pt-4 border-t border-primary-dark">

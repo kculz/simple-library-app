@@ -57,62 +57,7 @@ const StudentDashboard = () => {
         </p>
       </div>
 
-      {/* Search and Filters */}
-      <div className="bg-white rounded-lg shadow p-4 mb-6">
-        <form onSubmit={handleSearch} className="mb-4">
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <FaSearch className="text-gray-400" />
-            </div>
-            <input
-              type="text"
-              placeholder="Search books by title or author..."
-              className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-        </form>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Select
-            label="Department"
-            Icon={FaFilter}
-            value={filters.department}
-            onChange={(value) => handleFilterChange('department', value)}
-            options={[
-              { value: 'computer-science', label: 'Computer Science' },
-              { value: 'electrical', label: 'Electrical Engineering' },
-              { value: 'mechanical', label: 'Mechanical Engineering' },
-            ]}
-          />
-
-          <Select
-            label="Course"
-            Icon={FaBook}
-            value={filters.courseCode}
-            onChange={(value) => handleFilterChange('courseCode', value)}
-            options={[
-              { value: '', label: 'All Courses' },
-              ...(user.courses?.map(course => ({
-                value: course,
-                label: `${course} - ${getCourseName(course)}`
-              })) || []),
-            ]}
-          />
-
-          <Select
-            label="Book Type"
-            Icon={FaFilter}
-            value={filters.bookType}
-            onChange={(value) => handleFilterChange('bookType', value)}
-            options={[
-              { value: 'course', label: 'Course Books' },
-              { value: 'general', label: 'General Books' },
-            ]}
-          />
-        </div>
-      </div>
+  
 
       {/* Results */}
       <div className="mb-4 flex justify-between items-center">
@@ -155,15 +100,5 @@ const StudentDashboard = () => {
   );
 };
 
-// Helper function to get course names
-function getCourseName(code) {
-  const courseNames = {
-    'CSC101': 'Introduction to Computing',
-    'CSC102': 'Programming Fundamentals',
-    'EEE101': 'Basic Electrical Engineering',
-    // Add more course mappings as needed
-  };
-  return courseNames[code] || code;
-}
 
 export default StudentDashboard;

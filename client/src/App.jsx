@@ -12,6 +12,7 @@ import AdminDashboardLayout from './components/layouts/AdminDashboardLayout';
 import StudentDashboardLayout from './components/layouts/StudentDashboardLayout'; // You'll need to create this similar to AdminDashboardLayout
 import BookList from './pages/admin/BookList';
 import AddBook from './pages/admin/AddBook';
+import BookDetails from './pages/student/BookDetails';
 
 
 
@@ -62,6 +63,7 @@ function App() {
         }
       >
         <Route index element={<StudentDashboard />} />
+        <Route path="books/:id" element={<BookDetails />} />
         {/* <Route index element={<StudentBrowseBooksPage />} />
         <Route path="browse" element={<StudentBrowseBooksPage />} />
         <Route path="books/:id" element={<StudentBookDetailsPage />} /> */}

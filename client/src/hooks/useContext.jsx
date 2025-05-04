@@ -5,41 +5,63 @@ import useApi from './useApi';
 const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
-  const { getToken } = useGetToken();
+  const { getToken, setToken, removeToken, getTokenData } = useGetToken();
   const api = useApi();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Check for existing token on initial load
   useEffect(() => {
-    const initializeAuth = async () => {
-      const token = getToken();
-      if (token) {
-        try {
-          // Verify token with backend or Firebase
-          const response = await api.get('/users/me');
-          setUser(response.data);
-        } catch (error) {
-          console.error('Auth verification failed:', error);
-        }
-      }
-      setLoading(false);
-    };
-
-    initializeAuth();
+    const tokenData = getTokenData();
+    if (tokenData) {
+      setUser({
+        id: tokenData.userId,
+        role: tokenData.role,
+        name: tokenData.name,
+        email: tokenData.email
+        // Add other user properties from token as needed
+      });
+    }
+    setLoading(false);
   }, []);
 
   const login = async (userData, token) => {
-    localStorage.setItem('mtrelib_token', token);
-    setUser(userData);
+    setToken(token);
+    const tokenData = getTokenData();
+    setUser({
+      id: tokenData.userId,
+      role: tokenData.role,
+      name: tokenData.name,
+      email: tokenData.email,
+      ...userData
+    });
   };
 
   const logout = () => {
-    localStorage.removeItem('mtrelib_token');
+    removeToken();
     setUser(null);
   };
 
+  // Get current user role
+  const getUserRole = () => {
+    return user?.role;
+  };
+
+  // Get current user ID
+  const getUserId = () => {
+    return user?.id;
+  };
+
   return (
-    <AppContext.Provider value={{ user, loading, login, logout, api }}>
+    <AppContext.Provider value={{ 
+      user, 
+      loading, 
+      login, 
+      logout, 
+      api,
+      getUserRole,
+      getUserId
+    }}>
       {children}
     </AppContext.Provider>
   );
