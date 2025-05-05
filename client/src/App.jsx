@@ -46,6 +46,7 @@ function App() {
         <Route index element={<AdminDashboard />} />
         <Route path='books' element={<BookList />} />
         <Route path='books/add' element={<AddBook />} />
+        <Route path='books/:id' element={<BookDetails />} />
         {/* <Route index element={<AdminBooksPage />} />
         <Route path="books" element={<AdminBooksPage />} />
         <Route path="books/add" element={<AdminAddBookPage />} />

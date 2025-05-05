@@ -75,9 +75,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        
-
-
       </div>
 
       {/* Quick Actions */}
@@ -85,7 +82,7 @@ const Dashboard = () => {
         <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Link 
-            to="/admin/browse" 
+            to="/admin/books" 
             className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
           >
             <div className="flex items-center justify-between">
@@ -94,102 +91,11 @@ const Dashboard = () => {
             </div>
           </Link>
           
-          <Link 
-            to="/admin/courses" 
-            className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
-          >
-            <div className="flex items-center justify-between">
-              <span>Course Materials</span>
-              <FaArrowRight className="text-primary" />
-            </div>
-          </Link>
-          
-
         </div>
       </div>
 
-      {/* Recent Books */}
-      <div className="bg-white rounded-lg shadow p-4 mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">Recently Added Books</h2>
-          <Link 
-            to="/admin/browse" 
-            className="text-sm text-primary hover:text-primary-dark flex items-center"
-          >
-            View all <FaArrowRight className="ml-1" size={12} />
-          </Link>
-        </div>
-
-        {loading ? (
-          <div className="flex justify-center py-8">
-            <LoadingSpinner />
-          </div>
-        ) : recentBooks.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            No recent books found for your courses
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {recentBooks.slice(0, 4).map(book => (
-              <BookCard 
-                key={book._id} 
-                book={book}
-                linkTo={`/admin/books/${book._id}`}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Course Materials */}
-      <div className="bg-white rounded-lg shadow p-4">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">Your Courses</h2>
-          <Link 
-            to="/admin/courses" 
-            className="text-sm text-primary hover:text-primary-dark flex items-center"
-          >
-            View all <FaArrowRight className="ml-1" size={12} />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {user.courses?.map(course => (
-            <Link 
-              key={course} 
-              to={`/student/courses/${course}`}
-              className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium">{course}</h3>
-                  <p className="text-sm text-gray-500">
-                    {getCourseName(course)}
-                  </p>
-                </div>
-                <FaBook className="text-primary" />
-              </div>
-            </Link>
-          )) || (
-            <div className="text-gray-500">
-              No courses registered yet
-            </div>
-          )}
-        </div>
-      </div>
     </div>
   );
 };
-
-// Helper function to get course names
-function getCourseName(code) {
-  const courseNames = {
-    'CSC101': 'Introduction to Computing',
-    'CSC102': 'Programming Fundamentals',
-    'EEE101': 'Basic Electrical Engineering',
-    // Add more course mappings as needed
-  };
-  return courseNames[code] || code;
-}
 
 export default Dashboard;
