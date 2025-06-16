@@ -1,11 +1,12 @@
 import React from 'react';
 
-const Select = ({ label, value, onChange, options, Icon, className = '', ...props }) => {
+const Select = ({ label, name, value, onChange, options, Icon, error, required, disabled, className = '', ...props }) => {
   return (
     <div className={`mb-4 ${className}`}>
       {label && (
         <label className="block text-sm font-medium text-gray-700 mb-1">
           {label}
+          {required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
       <div className="relative">
@@ -15,14 +16,16 @@ const Select = ({ label, value, onChange, options, Icon, className = '', ...prop
           </div>
         )}
         <select
+          name={name}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={onChange} // This will now receive the event object
+          disabled={disabled}
           className={`
             appearance-none
             block w-full 
             ${Icon ? 'pl-10' : 'pl-3'} 
             pr-10 py-2 
-            border border-gray-300 
+            border ${error ? 'border-red-300' : 'border-gray-300'}
             rounded-md 
             shadow-sm 
             focus:outline-none 
@@ -32,6 +35,7 @@ const Select = ({ label, value, onChange, options, Icon, className = '', ...prop
             sm:text-sm
             bg-white
             text-gray-900
+            ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''}
           `}
           {...props}
         >
@@ -51,6 +55,7 @@ const Select = ({ label, value, onChange, options, Icon, className = '', ...prop
           </svg>
         </div>
       </div>
+      {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
     </div>
   );
 };
